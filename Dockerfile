@@ -2,9 +2,10 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --include=dev
+RUN npm ci
 COPY . .
-RUN npm run build && npm prune --production
+RUN npm run build
+RUN npm prune --omit=dev
 
 # Stage 2 - Slim Runtime
 FROM node:20-alpine AS runtime
