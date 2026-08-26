@@ -2,17 +2,26 @@ name: Build and Scan
 on:
   push:
     branches: [ main ]
+
 jobs:
   build-and-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - run: docker build -t slim-app:${{ github.sha }} .
-      - run: docker images
-      - uses: aquasecurity/trivy-action@0.24.0
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build optimized image
+        run: |
+          docker build -t slim-app:${{ github.sha }} .
+          docker images | grep slim-app
+
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: 'slim-app:${{ github.sha }}'
           format: 'table'
-          severity: 'HIGH,CRITICAL'
+          severity: 'CRITICAL,HIGH'
           exit-code: '0'
