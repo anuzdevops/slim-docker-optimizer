@@ -19,7 +19,7 @@ jobs:
           docker images | grep slim-app
 
       - name: Run Trivy scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'slim-app:${{ github.sha }}'
           format: 'table'
